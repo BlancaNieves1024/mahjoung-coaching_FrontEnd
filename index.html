@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>麻雀 AI牌譜添削ツール（仮）</title>
+    <style>
+        /* 💡 センスの良いシンプルなデザインのためのCSS定義 */
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        .note {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 24px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #34495e;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .error-message {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 6px;
+            min-height: 18px; /* ガタつき防止 */
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #27ae60;
+        }
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        /* MVP外の猫イラストエリア（プレースホルダー） */
+        .cat-illustration {
+            margin-top: 30px;
+            font-size: 40px;
+            opacity: 0.3;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>麻雀 AI牌譜添削ツール（仮）</h1>
+    <p class="note">※雀魂・天鳳の牌譜URLに対応しています</p>
+
+    <div class="form-group">
+        <label for="urlInput">牌譜URL</label>
+        <input type="text" id="urlInput" placeholder="https://... から始まるURLをペースト">
+        <div id="errorArea" class="error-message"></div>
+    </div>
+
+    <button id="submitBtn" onclick="startAnalysis()">解析を開始する</button>
+
+    <div class="cat-illustration">🐾 🐈 🐾</div>
+</div>
+
+<script>
+    // 💡 関数を小分けにする「センスの良い」JavaScriptの記述例
+    const errorArea = document.getElementById('errorArea');
+    const urlInput = document.getElementById('urlInput');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // 1. バリデーション関数（ダメならエラー文字を返す、通れば空文字を返す）
+    function validateUrl(url) {
+        // 早期リターン（Early Return）の考え方を適用
+        if (!url) {
+            return "URLを入力してください";
+        }
+        if (!url.startsWith("https://")) {
+            return "URLは https:// から入力してください";
+        }
+        if (!url.includes("mahjongsoul") && !url.includes("tenhou.net")) {
+            return "雀魂または天鳳の有効な牌譜URLを入力してください";
+        }
+        return ""; // エラーなし
+    }
+
+    // 2. メインの解析処理（送信ボタンが押された時の動き）
+    function startAnalysis() {
+        const urlValue = urlInput.value.trim();
+        
+        // 入力チェックの実行
+        const errorMessage = validateUrl(urlValue);
+        
+        if (errorMessage) {
+            // エラーがあったら画面に表示して処理を終了（早期リターン）
+            errorArea.innerText = errorMessage;
+            return;
+        }
+
+        // 正常な場合：エラーを消し、ローディング状態（非活性化）にする
+        errorArea.innerText = "";
+        setLoadingState(true);
+
+        // 趣味のチーム開発用の模擬API通信（2.5秒後に結果が出たと仮定）
+        setTimeout(() => {
+            alert("バックエンドへURLの送信が成功しました！\n送信データ: " + JSON.stringify({ url: urlValue }));
+            setLoadingState(false);
+            // 本番ではここで「出力画面」に画面遷移（Router等）させます
+        }, 2500);
+    }
+
+    // 3. UIのステート（状態）を制御する関数
+    function setLoadingState(isLoading) {
+        if (isLoading) {
+            submitBtn.disabled = true;
+            submitBtn.innerText = "解析中...";
+            urlInput.disabled = true;
+        } else {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "解析を開始する";
+            urlInput.disabled = false;
+        }
+    }
+</script>
+
+</body>
+</html>
