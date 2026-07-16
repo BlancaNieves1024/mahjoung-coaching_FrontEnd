@@ -1,6 +1,7 @@
 import json
 import re
 from bs4 import BeautifulSoup
+import sys  # 追加
 
 # --- 牌ID抽出 ---
 def get_tile_id(tag):
@@ -104,5 +105,14 @@ def extract_max_loss_turn(html_path):
     return max_loss_data
 
 if __name__ == "__main__":
-    result = extract_max_loss_turn("report5.html")
+    # 引数が指定されているかチェック
+    if len(sys.argv) < 2:
+        print("使い方: python script.py <path_to_html>")
+        sys.exit(1)
+    
+    # コマンドライン引数からファイル名を取得
+    html_file_path = sys.argv[1]
+    
+    # 処理を実行
+    result = extract_max_loss_turn(html_file_path)
     print(json.dumps(result, indent=4, ensure_ascii=False))
